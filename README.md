@@ -1,5 +1,5 @@
 # Calculating-mitochondria-percentage-for-different-species-
-The function built up for calculating mitochondria percentage for any species used for scRNA seq and analyzed with Seurat packages
+The function built up for calculating mitochondria percentage for any species used for scRNA seq and analyzed with Seurat packages. The R code not only includes the main R function but also includes examples explaining how to use this function. 
 ## Please make sure your Seurat version is v4 to use this function
 ## Background: 
 Nowadays, single-cell RNA seq (scRNA seq) has become a common tool to solve biological problems, enabling people to evaluate the genes' expression at single-cell resolution.
