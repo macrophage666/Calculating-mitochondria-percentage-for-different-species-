@@ -1,7 +1,5 @@
 library(AnnotationHub)#Annotationhub is used to query the database in ensemble
 library(ensembldb)#To use the function genes(),which can retrieve the queried annotation data from ensemble  
-
-
 # FUNCTION
 CalcMTPercent <- function(object, species, resources, gtf, seqname){
   if (resources == 'Ensemble'){
@@ -40,38 +38,3 @@ CalcMTPercent <- function(object, species, resources, gtf, seqname){
   object@meta.data$mitoPercent <- object@meta.data$mtUMI*100/object@meta.data$nCount_RNA #By dividing the total UMI count by mt UMI count, we can get mt percentage, which also can be added to the metadata of the SeuratObject
   object <- object #update the changed SeuratObject
 }
-
-#Example of using this function
-#The URL for dataset used in example: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE195574
-
-#Example1: The scRNA seq data from Rhesus Macaque, which used Ensemble to annotate genes
-#The packages that are used for loading the data
-library(Seurat)
-library(hdf5r)
-setwd('D:/data/Xiaoke Mid Term Project')
-test_Ensmbl <- Read10X_h5('./test_Ensmbl.h5')##Load scRNA seq data
-test_Ensmbl <- CreateSeuratObject(test_Ensmbl)#Create a SeuratObject
-head(test_Ensmbl@meta.data)
-test_Ensmbl <- CalcMTPercent(object = test_Ensmbl, species = 'Macaca mulatta', resources = 'Ensemble')
-head(test_Ensmbl@meta.data)#Check if mt percentage is added to the metadata.See 'Result for test_Ensmbl.png'.
-
-#Plot the QC
-win.graph()
-VlnPlot(test_Ensmbl, features = c('nCount_RNA','nFeature_RNA','mitoPercent'))
-
-#Example2: The scRNA seq data from Rhesus Macaque, which used Refseq to annotate genes
-library(Seurat) #Seurat v4 was used
-library(hdf5r)
-library(rtracklayer) #The package to read .gtf file
-gtf <- rtracklayer::import("./genomic.gtf") #This .gtf file is downloaded from: https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_003339765.1/
-test_Refseq <- Read10X_h5('./test_Refseq.h5')##Load scRNA seq data
-test_Refseq <- CreateSeuratObject(test_Refseq)#Create a SeuratObject
-test_Refseq <- CalcMTPercent(object = test_Refseq, resources = 'Refseq', gtf = gtf, seqname = 'NC_005943.1')
-head(test_Refseq)#Check if mt percentage is added to the metadata.See 'Result for test_Refseq.png'.
-
-#Example3: The scRNA seq data from Human PBMC, which used Ensmble to annotate genes
-test2_Ensmbl <- Read10X_h5('./test2_Ensmbl.h5')#This dataset was downloaded from: https://cf.10xgenomics.com/samples/cell-exp/7.0.1/SC3pv3_GEX_Human_PBMC/SC3pv3_GEX_Human_PBMC_filtered_feature_bc_matrix.h5
-test2_Ensmbl <- CreateSeuratObject(test2_Ensmbl)
-#By querying Ensemble dataset
-test2_Ensmbl <- CalcMTPercent(object = test2_Ensmbl, resources = 'Ensemble', species = 'Homo sapiens')
-head(test2_Ensmbl)
